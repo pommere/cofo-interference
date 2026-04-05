@@ -195,6 +195,38 @@ try:
     ax.legend(loc='upper right', frameon=False)
     
     st.pyplot(fig)
+    
+    # --- 2D Laser Simulation (Add this below your line graph code) ---
+    st.markdown("### Simulated Screen View")
+    
+    # Create a vertical grid to simulate the height of the laser dot
+    # We use a vertical Gaussian profile to make it look like a real beam
+    y_vertical = np.linspace(-5, 5, 200) # +/- 5mm vertical spread
+    X_grid, Y_grid = np.meshgrid(y * 1000, y_vertical)
+    
+    # Apply a vertical Gaussian decay (assuming a 2mm vertical beam radius)
+    vertical_profile = np.exp(-2 * (Y_grid**2) / (2.0**2))
+    
+    # The 2D image is the 1D horizontal intensity multiplied by the vertical profile
+    I_2d_image = I_final * vertical_profile
+    
+    # Create a custom colormap that fades to black instead of white
+    from matplotlib.colors import LinearSegmentedColormap
+    colors = [(0, 0, 0), laser_color] # Fade from black to the laser color
+    laser_cmap = LinearSegmentedColormap.from_list("custom_laser", colors)
+
+    fig2, ax2 = plt.subplots(figsize=(12, 2))
+    
+    # Plot the 2D image
+    img = ax2.imshow(I_2d_image, extent=[-50, 50, -5, 5], aspect='auto', 
+                     cmap=laser_cmap, origin='lower', vmax=1.0)
+    
+    # Clean up the axes to look like a dark room
+    ax2.set_facecolor('black')
+    ax2.set_xlabel("Position on Screen, y (mm)", fontsize=12)
+    ax2.set_yticks([]) # Hide vertical axis ticks for a cleaner look
+    
+    st.pyplot(fig2)
 
 except Exception as e:
     st.error(f"Visualization Error: {e}")
