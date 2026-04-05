@@ -95,11 +95,11 @@ w_mm = st.sidebar.slider("Laser Beam Spread [mm]", 1.0, 20.0, 5.0, step=0.5)
 w = w_mm * 1e-3  # Convert to meters
 
 st.sidebar.header("2. Slit Geometry")
-a_um = st.sidebar.slider("Slit Width (a) [μm]", 10, 200, 50, step=10)
+a_um = st.sidebar.slider("Slit Width (a) [μm]", 10, 200, 20, step=10)
 a = a_um * 1e-6  # Convert to meters
 
 if mode == "Double Slit":
-    d_um = st.sidebar.slider("Slit Separation (d) [μm]", 50, 500, 250, step=10)
+    d_um = st.sidebar.slider("Slit Separation (d) [μm]", 50, 500, 200, step=10)
     d = d_um * 1e-6
 else:
     d = 0.0
