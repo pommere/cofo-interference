@@ -174,16 +174,27 @@ with st.expander("📊 Mathematical Model Details"):
 
 # --- 5. UI: Dynamic Visualization ---
 try:
-    # Calculate the 'Zoom' based on the diffraction envelope
+    # 1. Improved Zoom Logic: 
+    # For Single Slit, we need to go beyond the first minimum to see secondary peaks.
     # y_envelope is the distance to the first null: L * lambda / a
-    y_envelope_mm = (L * lam / a) * 1000
-    zoom_limit = y_envelope_mm * 1.2  # 20% buffer beyond the envelope
+    y_first_null_mm = (L * lam / a) * 1000
     
-    # Update the spatial array to match the zoom for higher resolution
-    y_zoom = np.linspace(-zoom_limit/1000, zoom_limit/1000, 2000)
+    if mode == "Single Slit":
+        # Zoom out to 2.5x the first null to see the 1st and 2nd secondary peaks
+        zoom_limit = y_first_null_mm * 2.5
+    else:
+        # For Double Slit, 1.5x is usually enough to see the interference envelope
+        zoom_limit = y_first_null_mm * 1.5
+    
+    # Safety Check: Prevent the plot from being infinitesimally small or infinitely large
+    zoom_limit = max(min(zoom_limit, 100.0), 2.0) 
+
+    # 2. Update the spatial array with higher density (3000 pts) for sharp resolution
+    y_zoom = np.linspace(-zoom_limit/1000, zoom_limit/1000, 3000)
     theta_zoom = np.arctan(y_zoom / L)
     
-    # Recalculate Intensity for the zoomed range
+    # 3. Recalculate Intensity for the zoomed range
+    # Note: np.sinc(x) is sin(pi*x)/(pi*x), so we divide out the pi
     beta_z = (a * np.sin(theta_zoom)) / lam
     I_single_z = np.sinc(beta_z)**2
     I_gauss_z = np.exp(-2 * (y_zoom**2) / (w**2))
@@ -201,7 +212,7 @@ try:
     
     ax1.set_xlim(-zoom_limit, zoom_limit)
     ax1.set_ylim(0, 1.05)
-    ax1.set_xlabel("Position (mm)")
+    ax1.set_xlabel("Position on Screen (mm)")
     ax1.set_ylabel("Relative Intensity")
     ax1.spines['top'].set_visible(False)
     ax1.spines['right'].set_visible(False)
@@ -210,27 +221,27 @@ try:
     # --- Plot 2: Simulated Laser View (2D) ---
     st.markdown("### Simulated Screen View")
     
+    # Exposure Slider in Sidebar (Move this to the sidebar section for better UI if desired)
+    exposure = st.sidebar.slider("Visual Exposure (Gain)", 0.01, 1.0, 0.2)
+
     # Create the 2D "Glow"
-    y_vert = np.linspace(-3, 3, 100) # 6mm vertical slice
+    y_vert = np.linspace(-3, 3, 100) 
     X_grid, Y_grid = np.meshgrid(y_zoom * 1000, y_vert)
-    vert_gauss = np.exp(-2 * (Y_grid**2) / (1.5**2)) # 1.5mm vertical beam waist
+    vert_gauss = np.exp(-2 * (Y_grid**2) / (1.5**2)) 
     I_2d = I_final_z * vert_gauss
 
     from matplotlib.colors import LinearSegmentedColormap
     laser_cmap = LinearSegmentedColormap.from_list("laser", [(0,0,0), laser_color])
 
     fig2, ax2 = plt.subplots(figsize=(12, 1.5))
-    # Create a slider to simulate 'Camera Exposure'
-    exposure = st.sidebar.slider("Visual Exposure", 0.1, 1.0, 0.5)
-
-    # In the imshow call:
+    # Using the 'exposure' value to set vmax makes the dim peaks visible
     ax2.imshow(I_2d, extent=[-zoom_limit, zoom_limit, -3, 3], 
-           aspect='auto', cmap=laser_cmap, vmax=exposure)
+               aspect='auto', cmap=laser_cmap, vmax=exposure)
     
     ax2.set_facecolor('black')
-    ax2.set_xticks([]) # Keep it clean
+    ax2.set_xticks([]) 
     ax2.set_yticks([])
     st.pyplot(fig2)
 
 except Exception as e:
-    st.error(f"Zoom calculation error: {e}")
+    st.error(f"Visualization calculation error: {e}")
