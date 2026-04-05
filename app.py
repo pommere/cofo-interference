@@ -220,8 +220,12 @@ try:
     laser_cmap = LinearSegmentedColormap.from_list("laser", [(0,0,0), laser_color])
 
     fig2, ax2 = plt.subplots(figsize=(12, 1.5))
+    # Create a slider to simulate 'Camera Exposure'
+    exposure = st.sidebar.slider("Visual Exposure", 0.1, 1.0, 0.5)
+
+    # In the imshow call:
     ax2.imshow(I_2d, extent=[-zoom_limit, zoom_limit, -3, 3], 
-               aspect='auto', cmap=laser_cmap, vmax=0.8) # vmax=0.8 prevents blowout
+           aspect='auto', cmap=laser_cmap, vmax=exposure)
     
     ax2.set_facecolor('black')
     ax2.set_xticks([]) # Keep it clean
