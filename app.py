@@ -108,26 +108,27 @@ st.sidebar.header("3. Environment")
 L = st.sidebar.number_input("Distance to Screen (L) [m]", value=2.0, step=0.1)
 
 # --- 3. Physics & Math Functions ---
-# Generate spatial array (y) from -50mm to +50mm
-y = np.linspace(-0.05, 0.05, 2000)
-theta = np.arctan(y / L)
+# We need to ensure theta covers the area we actually want to see
+# Let's use the zoom_limit for the calculation rather than a static range
+y_first_null = (L * lam / a)
+plot_limit = y_first_null * (2.5 if mode == "Single Slit" else 1.5)
+
+y_zoom = np.linspace(-plot_limit, plot_limit, 3000)
+theta_zoom = np.arctan(y_zoom / L)
 
 # Single slit diffraction envelope
-# np.sinc(x) calculates sin(pi*x)/(pi*x). We define x = (a*sin(theta))/lam
-beta_norm = (a * np.sin(theta)) / lam
-I_single = np.sinc(beta_norm)**2
+# np.sinc(x) is sin(pi*x)/(pi*x), so x = (a*sin(theta))/lam is correct
+beta_norm = (a * np.sin(theta_zoom)) / lam
+I_final = np.sinc(beta_norm)**2
 
 # Double slit interference pattern
 if mode == "Double Slit":
-    alpha = (np.pi * d * np.sin(theta)) / lam
-    I_interfere = np.cos(alpha)**2
-    I_ideal = I_single * I_interfere
-else:
-    I_ideal = I_single
+    alpha = (np.pi * d * np.sin(theta_zoom)) / lam
+    I_final = I_final * (np.cos(alpha)**2)
 
-# Apply Gaussian laser beam envelope
-I_gaussian = np.exp(-2 * (y**2) / (w**2))
-I_final = I_ideal * I_gaussian
+# OPTIONAL: If you want a subtle fade to mimic the laser's finite energy 
+# without killing the peaks, use a very large spread or skip it.
+# I_final *= np.exp(-2 * (y_zoom**2) / (0.5**2)) # 0.5m spread is safer
 
 # --- 4. UI: Results & Metrics ---
 st.subheader("Lab Analysis Results")
