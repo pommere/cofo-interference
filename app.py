@@ -103,6 +103,13 @@ if mode == "Double Slit":
     d = d_um * 1e-6
 else:
     d = 0.0
+    # The first secondary maximum is at beta_norm approx 1.43
+    first_sec_max = 1.43 * (lam * L / a) * 1000
+    c3.metric("1st Side Peak (±)", f"{first_sec_max:.2f} mm")
+    
+    # Check Intensity of side peak (should be ~4.7%)
+    relative_bright = (np.sinc(1.43)**2) * 100
+    c4.metric("Side Peak Brightness", f"{relative_bright:.1f}%")
 
 st.sidebar.header("3. Environment")
 L = st.sidebar.number_input("Distance to Screen (L) [m]", value=2.0, step=0.1)
