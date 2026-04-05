@@ -172,61 +172,61 @@ with st.expander("📊 Mathematical Model Details"):
     Where $\\beta = \\frac{\\pi a \\sin \\theta}{\\lambda}$ and $\\alpha = \\frac{\\pi d \\sin \\theta}{\\lambda}$. Note that as per standard probability models in quantum mechanics, this intensity graph represents the *probability distribution* of where an individual photon will land.
     """)
 
-# --- 5. UI: Visualization ---
+# --- 5. UI: Dynamic Visualization ---
 try:
-    # Set up a clean, professional plot without unnecessary gridlines or backgrounds
-    fig, ax = plt.subplots(figsize=(12, 5))
+    # Calculate the 'Zoom' based on the diffraction envelope
+    # y_envelope is the distance to the first null: L * lambda / a
+    y_envelope_mm = (L * lam / a) * 1000
+    zoom_limit = y_envelope_mm * 1.2  # 20% buffer beyond the envelope
     
-    # Plot final intensity
-    ax.plot(y * 1000, I_final, color=laser_color, lw=2.5, label='Measured Intensity')
-    ax.fill_between(y * 1000, I_final, color=laser_color, alpha=0.3)
+    # Update the spatial array to match the zoom for higher resolution
+    y_zoom = np.linspace(-zoom_limit/1000, zoom_limit/1000, 2000)
+    theta_zoom = np.arctan(y_zoom / L)
     
-    # Optional: Plot the single slit envelope to show how it bounds the double slit pattern
+    # Recalculate Intensity for the zoomed range
+    beta_z = (a * np.sin(theta_zoom)) / lam
+    I_single_z = np.sinc(beta_z)**2
+    I_gauss_z = np.exp(-2 * (y_zoom**2) / (w**2))
+    
     if mode == "Double Slit":
-        ax.plot(y * 1000, I_single * I_gaussian, color='gray', linestyle='--', lw=1.5, alpha=0.8, label='Diffraction Envelope')
+        alpha_z = (np.pi * d * np.sin(theta_zoom)) / lam
+        I_final_z = I_single_z * (np.cos(alpha_z)**2) * I_gauss_z
+    else:
+        I_final_z = I_single_z * I_gauss_z
 
-    # Formatting for a clean manual aesthetic
-    ax.set_xlim(-50, 50)
-    ax.set_ylim(0, 1.05)
-    ax.set_xlabel("Position on Screen, y (mm)", fontsize=12)
-    ax.set_ylabel("Relative Intensity", fontsize=12)
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.legend(loc='upper right', frameon=False)
+    # --- Plot 1: Intensity Graph ---
+    fig1, ax1 = plt.subplots(figsize=(12, 4))
+    ax1.plot(y_zoom * 1000, I_final_z, color=laser_color, lw=2)
+    ax1.fill_between(y_zoom * 1000, I_final_z, color=laser_color, alpha=0.2)
     
-    st.pyplot(fig)
-    
-    # --- 2D Laser Simulation (Add this below your line graph code) ---
+    ax1.set_xlim(-zoom_limit, zoom_limit)
+    ax1.set_ylim(0, 1.05)
+    ax1.set_xlabel("Position (mm)")
+    ax1.set_ylabel("Relative Intensity")
+    ax1.spines['top'].set_visible(False)
+    ax1.spines['right'].set_visible(False)
+    st.pyplot(fig1)
+
+    # --- Plot 2: Simulated Laser View (2D) ---
     st.markdown("### Simulated Screen View")
     
-    # Create a vertical grid to simulate the height of the laser dot
-    # We use a vertical Gaussian profile to make it look like a real beam
-    y_vertical = np.linspace(-5, 5, 200) # +/- 5mm vertical spread
-    X_grid, Y_grid = np.meshgrid(y * 1000, y_vertical)
-    
-    # Apply a vertical Gaussian decay (assuming a 2mm vertical beam radius)
-    vertical_profile = np.exp(-2 * (Y_grid**2) / (2.0**2))
-    
-    # The 2D image is the 1D horizontal intensity multiplied by the vertical profile
-    I_2d_image = I_final * vertical_profile
-    
-    # Create a custom colormap that fades to black instead of white
-    from matplotlib.colors import LinearSegmentedColormap
-    colors = [(0, 0, 0), laser_color] # Fade from black to the laser color
-    laser_cmap = LinearSegmentedColormap.from_list("custom_laser", colors)
+    # Create the 2D "Glow"
+    y_vert = np.linspace(-3, 3, 100) # 6mm vertical slice
+    X_grid, Y_grid = np.meshgrid(y_zoom * 1000, y_vert)
+    vert_gauss = np.exp(-2 * (Y_grid**2) / (1.5**2)) # 1.5mm vertical beam waist
+    I_2d = I_final_z * vert_gauss
 
-    fig2, ax2 = plt.subplots(figsize=(12, 2))
+    from matplotlib.colors import LinearSegmentedColormap
+    laser_cmap = LinearSegmentedColormap.from_list("laser", [(0,0,0), laser_color])
+
+    fig2, ax2 = plt.subplots(figsize=(12, 1.5))
+    ax2.imshow(I_2d, extent=[-zoom_limit, zoom_limit, -3, 3], 
+               aspect='auto', cmap=laser_cmap, vmax=0.8) # vmax=0.8 prevents blowout
     
-    # Plot the 2D image
-    img = ax2.imshow(I_2d_image, extent=[-50, 50, -5, 5], aspect='auto', 
-                     cmap=laser_cmap, origin='lower', vmax=1.0)
-    
-    # Clean up the axes to look like a dark room
     ax2.set_facecolor('black')
-    ax2.set_xlabel("Position on Screen, y (mm)", fontsize=12)
-    ax2.set_yticks([]) # Hide vertical axis ticks for a cleaner look
-    
+    ax2.set_xticks([]) # Keep it clean
+    ax2.set_yticks([])
     st.pyplot(fig2)
 
 except Exception as e:
-    st.error(f"Visualization Error: {e}")
+    st.error(f"Zoom calculation error: {e}")
