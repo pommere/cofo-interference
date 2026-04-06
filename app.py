@@ -132,10 +132,10 @@ exposure = st.sidebar.slider("Visual Exposure (Gain)", 0.01, 1.0, 0.2)
 st.sidebar.divider()
 st.sidebar.header("4. Math Check")
 if mode == "Single Slit":
-    student_val = st.sidebar.number_input("Your Calculated `a' [μm]", value=0.0, step=0.1)
+    student_val = st.sidebar.number_input("Your Calculated 'a' [μm]", value=0.0, step=0.1)
     true_val = a_um
 else:
-    student_val = st.sidebar.number_input("Your Calculated `d' [μm]", value=0.0, step=0.1)
+    student_val = st.sidebar.number_input("Your Calculated 'd' [μm]", value=0.0, step=0.1)
     true_val = d_um
 
 # --- 3. Physics & Math Logic ---
