@@ -139,15 +139,16 @@ laser_color = '#FF0000' if lam_nm >= 600 else '#00FF00' if lam_nm >= 495 else '#
 
 if mode == "Double Slit":
     fringe_spacing = (lam * L / d) * 1000
-    c2.metric("Fringe Spacing", f"{fringe_spacing:.2f} mm")
-    c3.metric("m=1 Peak", f"±{fringe_spacing:.2f} mm")
-    c4.metric("m=2 Peak", f"±{fringe_spacing*2:.2f} mm")
+    envelope_width = (2 * lam * L / a) * 1000 # Distance between m=1 diffraction minima
+    c2.metric("Fringe Spacing (Δy)", f"{fringe_spacing:.2f} mm")
+    c3.metric("m=2 Peak Dist.", f"{fringe_spacing * 2:.2f} mm")
+    c4.metric("Envelope Width", f"{envelope_width:.1f} mm")
 else:
-    central_width = (2 * lam * L / a) * 1000
-    first_side_peak = 1.43 * (lam * L / a) * 1000
-    c2.metric("Central Max", f"{central_width:.1f} mm")
-    c3.metric("1st Side Peak", f"±{first_side_peak:.1f} mm")
-    c4.metric("Side Intensity", f"4.7%")
+    m1_dist = (2 * lam * L / a) * 1000
+    m2_dist = (4 * lam * L / a) * 1000
+    c2.metric("m=1 Minima Dist.", f"{m1_dist:.1f} mm")
+    c3.metric("m=2 Minima Dist.", f"{m2_dist:.1f} mm")
+    c4.metric("Target Slit a", f"{a_um} μm")
 
 # --- 5. UI: Visualization ---
 # Plot 1: Line Graph
