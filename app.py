@@ -163,17 +163,28 @@ laser_color = '#FF0000' if lam_nm >= 600 else '#00FF00' if lam_nm >= 495 else '#
 p_error = (abs(student_val - true_val) / true_val) * 100 if student_val > 0 else np.nan
 
 if mode == "Double Slit":
-    c1, c2, c3, c4 = st.columns(4)
-    env_dist = (2 * lam * L / a) * 1000
-    int_m1 = (2 * lam * L / d) * 1000
-    int_m2 = (4 * lam * L / d) * 1000
+    # 5 columns: Envelope, Int. Minima, Int. Maxima m=1, Int. Maxima m=2, % Error
+    c1, c2, c3, c4, c5 = st.columns(5)
     
+    env_dist = (2 * lam * L / a) * 1000       # Diffraction Envelope (m=1)
+    int_min1 = (lam * L / d) * 1000           # Interference Minima (m=1)
+    int_max1 = (2 * lam * L / d) * 1000       # Interference Maxima (m=1)
+    int_max2 = (4 * lam * L / d) * 1000       # Interference Maxima (m=2)
+    
+    # 1. Diffraction Envelope (m=1)
     c1.metric("Diff. Envelope (m=1)", f"{env_dist:.2f} mm")
-    c2.metric("Int. Maxima (m=1)", f"{int_m1:.2f} mm")
-    c3.metric("Int. Maxima (m=2)", f"{int_m2:.2f} mm")
     
-    # Corrected display logic using np.isnan()
-    c4.metric("% Error (d)", "---" if np.isnan(p_error) else f"{p_error:.1f}%")
+    # 2. Interference Minima (m=1) - Added per request
+    c2.metric("Int. Minima (m=1)", f"{int_min1:.2f} mm")
+    
+    # 3. Interference Maxima (m=1)
+    c3.metric("Int. Maxima (m=1)", f"{int_max1:.2f} mm")
+    
+    # 4. Interference Maxima (m=2)
+    c4.metric("Int. Maxima (m=2)", f"{int_max2:.2f} mm")
+    
+    # 5. Percent Error (d)
+    c5.metric("% Error (d)", "---" if np.isnan(p_error) else f"{p_error:.1f}%")
 
 else:
     c1, c2, c3 = st.columns(3)
@@ -182,8 +193,6 @@ else:
     
     c1.metric("Minima Dist. (m=1)", f"{m1_dist:.2f} mm")
     c2.metric("Minima Dist. (m=2)", f"{m2_dist:.2f} mm")
-    
-    # Corrected display logic using np.isnan()
     c3.metric("% Error (a)", "---" if np.isnan(p_error) else f"{p_error:.1f}%")
 
 # --- 5. UI: Visualization ---
