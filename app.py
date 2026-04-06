@@ -88,6 +88,17 @@ When light passes through two slits side-by-side, the waves overlap to create sh
 $$y = \frac{m \lambda L}{d}$$
 Where **$d$** is the separation distance between the two slits. 
 *(Note: You will also see the broader single-slit "envelope" causing the bright spots to fade out at the diffraction minima!)*
+
+### 3. Percent Error ($\epsilon_r$)
+To check the accuracy of your experimental measurement against the theoretical value, use the percent error formula:
+$$\epsilon_r = \left| \frac{\text{Experimental} - \text{Theoretical}}{\text{Theoretical}} \right| \times 100\%$$
+
+**Example:**
+If the theoretical slit width is **40.0 μm** and your calculated experimental value is **38.5 μm**:
+1. Subtract: $38.5 - 40.0 = -1.5$
+2. Take absolute value: $1.5$
+3. Divide by theoretical: $1.5 / 40.0 = 0.0375$
+4. Multiply by 100: **3.75% error**
 """)
 
 # --- 2. Sidebar: Experimental Parameters ---
@@ -110,6 +121,16 @@ st.sidebar.header("3. Environment")
 L = st.sidebar.number_input("Distance to Screen (L) [m]", value=2.0, step=0.1)
 exposure = st.sidebar.slider("Visual Exposure (Gain)", 0.01, 1.0, 0.2)
 
+# --- NEW: Student Math Check Inputs ---
+st.sidebar.divider()
+st.sidebar.header("4. Math Check")
+if mode == "Single Slit":
+    student_val = st.sidebar.number_input("Your Calculated 'a' [μm]", value=0.0, step=0.1)
+    true_val = a_um
+else:
+    student_val = st.sidebar.number_input("Your Calculated 'd' [μm]", value=0.0, step=0.1)
+    true_val = d_um
+
 # --- 3. Physics & Math Logic ---
 y_null_mm = (L * lam / a) * 1000
 zoom_limit = y_null_mm * (2.5 if mode == "Single Slit" else 1.5)
@@ -125,41 +146,35 @@ if mode == "Double Slit":
     alpha = (np.pi * d * np.sin(theta)) / lam
     I_final *= (np.cos(alpha)**2)
 
-# Visual beam spread is now hardcoded to a constant 100mm to preserve the fade
 w = 100.0 * 1e-3
 I_final *= np.exp(-2 * (y_pts**2) / (w**2))
 
 # --- 4. UI: Results & Metrics ---
 st.subheader("Lab Analysis Results")
-
 laser_color = '#FF0000' if lam_nm >= 600 else '#00FF00' if lam_nm >= 495 else '#0000FF' if lam_nm >= 450 else '#8A2BE2'
 
+# Calculate Percent Error
+p_error = (abs(student_val - true_val) / true_val) * 100 if student_val > 0 else None
+
 if mode == "Double Slit":
-    c1, c2, c3 = st.columns(3)
-    
-    # Envelope Width (Distance between m=1 diffraction minima)
+    c1, c2, c3, c4 = st.columns(4)
     env_dist = (2 * lam * L / a) * 1000
-    c1.metric("Diff. Envelope (m=1 Minima)", f"{env_dist:.2f} mm")
-    
-    # Interference Maxima (Distance between m=1 maxima on both sides)
     int_m1 = (2 * lam * L / d) * 1000
-    c2.metric("Int. Maxima (m=1)", f"{int_m1:.2f} mm")
-    
-    # Interference Maxima (Distance between m=2 maxima on both sides)
     int_m2 = (4 * lam * L / d) * 1000
+    
+    c1.metric("Diff. Envelope (m=1)", f"{env_dist:.2f} mm")
+    c2.metric("Int. Maxima (m=1)", f"{int_m1:.2f} mm")
     c3.metric("Int. Maxima (m=2)", f"{int_m2:.2f} mm")
+    c4.metric("% Error (d)", f"{p_error:.2f}%" if p_error is not None else "---")
 
 else:
-    c1, c2 = st.columns(2)
-    
-    # Minima Distance (Distance between m=1 minima on both sides)
+    c1, c2, c3 = st.columns(3)
     m1_dist = (2 * lam * L / a) * 1000
-    c1.metric("Minima Dist. (m=1)", f"{m1_dist:.2f} mm")
-    
-    # Minima Distance (Distance between m=2 minima on both sides)
     m2_dist = (4 * lam * L / a) * 1000
+    
+    c1.metric("Minima Dist. (m=1)", f"{m1_dist:.2f} mm")
     c2.metric("Minima Dist. (m=2)", f"{m2_dist:.2f} mm")
-
+    c3.metric("% Error (a)", f"{p_error:.2f}%" if p_error is not None else "---")
 
 # --- 5. UI: Visualization ---
 fig1, ax1 = plt.subplots(figsize=(12, 3.5))
