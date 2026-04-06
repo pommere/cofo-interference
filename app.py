@@ -121,7 +121,7 @@ else:
     d = 0.0
 
 st.sidebar.header("3. Environment")
-L = st.sidebar.number_input("Distance to Screen (L) [m]", value=2.0, step=0.1)
+L = st.sidebar.number_input("Distance to Screen (L) [m]", value=0.7, step=0.1)
 exposure = st.sidebar.slider("Visual Exposure (Gain)", 0.01, 1.0, 0.2)
 
 # --- NEW: Student Math Check Inputs ---
@@ -157,7 +157,7 @@ st.subheader("Lab Analysis Results")
 laser_color = '#FF0000' if lam_nm >= 600 else '#00FF00' if lam_nm >= 495 else '#0000FF' if lam_nm >= 450 else '#8A2BE2'
 
 # Calculate Percent Error
-p_error = (abs(student_val - true_val) / true_val) * 100 if student_val > 0 else None
+p_error = (abs(student_val - true_val) / true_val) * 100 if student_val > 0 else np.nan
 
 if mode == "Double Slit":
     c1, c2, c3, c4 = st.columns(4)
@@ -168,7 +168,9 @@ if mode == "Double Slit":
     c1.metric("Diff. Envelope (m=1)", f"{env_dist:.2f} mm")
     c2.metric("Int. Maxima (m=1)", f"{int_m1:.2f} mm")
     c3.metric("Int. Maxima (m=2)", f"{int_m2:.2f} mm")
-    c4.metric("% Error (d)", f"{p_error:.2f}%" if p_error is not None else "---")
+    
+    # Use np.isnan() for the check
+    c4.metric("% Error (d)", "---" if np.isnan(p_error) else f"{p_error:.2f}%")
 
 else:
     c1, c2, c3 = st.columns(3)
@@ -177,7 +179,9 @@ else:
     
     c1.metric("Minima Dist. (m=1)", f"{m1_dist:.2f} mm")
     c2.metric("Minima Dist. (m=2)", f"{m2_dist:.2f} mm")
-    c3.metric("% Error (a)", f"{p_error:.2f}%" if p_error is not None else "---")
+    
+    # Use np.isnan() for the check
+    c3.metric("% Error (a)", "---" if np.isnan(p_error) else f"{p_error:.2f}%")
 
 # --- 5. UI: Visualization ---
 fig1, ax1 = plt.subplots(figsize=(12, 3.5))
