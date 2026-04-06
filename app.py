@@ -130,25 +130,58 @@ I_final *= np.exp(-2 * (y_pts**2) / (w**2))
 
 # --- 4. UI: Results & Metrics ---
 st.subheader("Lab Analysis Results")
-c1, c2, c3, c4 = st.columns(4)
 
-c1.metric("Wavelength (λ)", f"{lam_nm} nm")
+# NEW: Student Math Check Inputs in the Sidebar
+st.sidebar.header("4. Math Check")
+st.sidebar.markdown("Enter your calculated values to check your % error.")
+calc_a = st.sidebar.number_input("Calculated Slit Width (a) [μm]", value=0.0, step=0.1)
 
-# Color Selection
+# Color Selection for the Plot
 laser_color = '#FF0000' if lam_nm >= 600 else '#00FF00' if lam_nm >= 495 else '#0000FF' if lam_nm >= 450 else '#8A2BE2'
 
 if mode == "Double Slit":
-    fringe_spacing = (lam * L / d) * 1000
-    envelope_width = (2 * lam * L / a) * 1000 # Distance between m=1 diffraction minima
-    c2.metric("Fringe Spacing (Δy)", f"{fringe_spacing:.2f} mm")
-    c3.metric("m=2 Peak Dist.", f"{fringe_spacing * 2:.2f} mm")
-    c4.metric("Envelope Width", f"{envelope_width:.1f} mm")
+    calc_d = st.sidebar.number_input("Calculated Separation (d) [μm]", value=0.0, step=0.1)
+    
+    # Use 5 columns for Double Slit to fit everything
+    c1, c2, c3, c4, c5 = st.columns(5)
+    
+    # 1. Diffraction Envelope Width (Distance between m=1 diffraction minima)
+    env_dist = (2 * lam * L / a) * 1000
+    c1.metric("Diff. Envelope (m=1)", f"{env_dist:.2f} mm")
+    
+    # 2. Interference Maxima (Distance between m=1 maxima on both sides)
+    int_m1 = (2 * lam * L / d) * 1000
+    c2.metric("Int. Maxima (m=1)", f"{int_m1:.2f} mm")
+    
+    # 3. Interference Maxima (Distance between m=2 maxima on both sides)
+    int_m2 = (4 * lam * L / d) * 1000
+    c3.metric("Int. Maxima (m=2)", f"{int_m2:.2f} mm")
+    
+    # 4 & 5. Percent Errors (Only display if student entered a value > 0)
+    err_a = (abs(calc_a - a_um) / a_um) * 100 if calc_a > 0 else 0
+    err_d = (abs(calc_d - d_um) / d_um) * 100 if calc_d > 0 else 0
+    
+    c4.metric("% Error (a)", f"{err_a:.1f}%" if calc_a > 0 else "---")
+    c5.metric("% Error (d)", f"{err_d:.1f}%" if calc_d > 0 else "---")
+
 else:
+    # Use 4 columns for Single Slit
+    c1, c2, c3, c4 = st.columns(4)
+    
+    # 1. Minima Distance (Distance between m=1 minima on both sides)
     m1_dist = (2 * lam * L / a) * 1000
+    c1.metric("Minima Dist (m=1)", f"{m1_dist:.2f} mm")
+    
+    # 2. Minima Distance (Distance between m=2 minima on both sides)
     m2_dist = (4 * lam * L / a) * 1000
-    c2.metric("m=1 Minima Dist.", f"{m1_dist:.1f} mm")
-    c3.metric("m=2 Minima Dist.", f"{m2_dist:.1f} mm")
-    c4.metric("Target Slit a", f"{a_um} μm")
+    c2.metric("Minima Dist (m=2)", f"{m2_dist:.2f} mm")
+    
+    # 3. Percent Error (Only display if student entered a value > 0)
+    err_a = (abs(calc_a - a_um) / a_um) * 100 if calc_a > 0 else 0
+    c3.metric("% Error (a)", f"{err_a:.1f}%" if calc_a > 0 else "---")
+    
+    # 4. Empty column to keep layout uniform
+    c4.empty()
 
 # --- 5. UI: Visualization ---
 # Plot 1: Line Graph
