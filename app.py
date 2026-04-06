@@ -10,13 +10,13 @@ logo_path = "cofo-logo.jpg"
 try:
     favicon = Image.open(logo_path)
     st.set_page_config(
-        page_title="CofO | Wave Optics Lab", 
+        page_title="CofO | Particle-Wave Interference Lab", 
         page_icon=favicon, 
         layout="centered"
     )
 except:
     st.set_page_config(
-        page_title="CofO | Wave Optics Lab", 
+        page_title="CofO | Particle-Wave Interference Lab", 
         layout="centered"
     )
 
@@ -67,39 +67,40 @@ with col2:
     """, unsafe_allow_html=True)
 
 # --- Updated Theory Section (Algebra-based) ---
-st.markdown(r"""
-Welcome to the Wave Optics Lab! 
+with st.expander("📊 Energy Exchange & Synthesis Help"):
+    st.markdown(r"""
+    Welcome to the Wave Optics Lab! 
 
-When light passes through a narrow opening, it spreads out and creates a pattern of spots on a viewing screen. By measuring the distances between these spots, we can calculate the exact dimensions of the microscopic slits.
+    When light passes through a narrow opening, it spreads out and creates a pattern of spots on a viewing screen. By measuring the distances between these spots, we can calculate the exact dimensions of the microscopic slits.
 
-### 1. Single Slit (Diffraction)
-For a single opening, the light cancels itself out at specific points, creating **dark spots (minima)**. The distance ($y$) from the center line to the $m^{th}$ dark spot is given by the formula:
-$$y = \frac{m \lambda L}{a}$$
-Where:
-* **$m$**: Order of the dark spot (1 for the first dark spot, 2 for the second, etc.)
-* **$\lambda$**: Wavelength of the laser light
-* **$L$**: Distance from the slit to the screen
-* **$a$**: Width of the single slit
+    ### 1. Single Slit (Diffraction)
+    For a single opening, the light cancels itself out at specific points, creating **dark spots (minima)**. The distance ($y$) from the center line to the $m^{th}$ dark spot is given by the formula:
+    $$y = \frac{m \lambda L}{a}$$
+    Where:
+    * **$m$**: Order of the dark spot (1 for the first dark spot, 2 for the second, etc.)
+    * **$\lambda$**: Wavelength of the laser light
+    * **$L$**: Distance from the slit to the screen
+    * **$a$**: Width of the single slit
 
-**Lab Tip:** In your sketch, you will measure the total distance between the dark spots on *both* sides of the center. To find $y$, simply divide your total measured distance by 2. You can then rearrange the formula to solve for the slit width: **$a = \frac{m \lambda L}{y}$**
+    **Lab Tip:** In your sketch, you will measure the total distance between the dark spots on *both* sides of the center. To find $y$, simply divide your total measured distance by 2. You can then rearrange the formula to solve for the slit width: **$a = \frac{m \lambda L}{y}$**
 
-### 2. Double Slit (Interference)
-When light passes through two slits side-by-side, the waves overlap to create sharp **bright spots (maxima)**. The distance ($y$) from the center to the $m^{th}$ bright spot is:
-$$y = \frac{m \lambda L}{d}$$
-Where **$d$** is the separation distance between the two slits. 
-*(Note: You will also see the broader single-slit "envelope" causing the bright spots to fade out at the diffraction minima!)*
+    ### 2. Double Slit (Interference)
+    When light passes through two slits side-by-side, the waves overlap to create sharp **bright spots (maxima)**. The distance ($y$) from the center to the $m^{th}$ bright spot is:
+    $$y = \frac{m \lambda L}{d}$$
+    Where **$d$** is the separation distance between the two slits. 
+    *(Note: You will also see the broader single-slit "envelope" causing the bright spots to fade out at the diffraction minima!)*
 
-### 3. Percent Error ($\epsilon_r$)
-To check the accuracy of your experimental measurement against the theoretical value, use the percent error formula:
-$$\epsilon_r = \left| \frac{\text{Experimental} - \text{Theoretical}}{\text{Theoretical}} \right| \times 100\%$$
+    ### 3. Percent Error ($\epsilon_r$)
+    To check the accuracy of your experimental measurement against the theoretical value, use the percent error formula:
+    $$\epsilon_r = \left| \frac{\text{Experimental} - \text{Theoretical}}{\text{Theoretical}} \right| \times 100\%$$
 
-**Example:**
-If the theoretical slit width is **40.0 μm** and your calculated experimental value is **38.5 μm**:
-1. Subtract: $38.5 - 40.0 = -1.5$
-2. Take absolute value: $1.5$
-3. Divide by theoretical: $1.5 / 40.0 = 0.0375$
-4. Multiply by 100: **3.75% error**
-""")
+    **Example:**
+    If the theoretical slit width is **40.0 μm** and your calculated experimental value is **38.5 μm**:
+    1. Subtract: $38.5 - 40.0 = -1.5$
+    2. Take absolute value: $1.5$
+    3. Divide by theoretical: $1.5 / 40.0 = 0.0375$
+    4. Multiply by 100: **3.75% error**
+    """)
 
 # --- 2. Sidebar: Experimental Parameters ---
 st.sidebar.header("1. Laser Settings")
