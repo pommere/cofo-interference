@@ -176,10 +176,10 @@ if mode == "Double Slit":
     int_max2 = (4 * lam * L / d) * 1000
 
     # Use shorter labels to prevent truncation/overflow
-    c1.metric("Envelope (m=1)", f"{env_dist:.1f} mm")
-    c2.metric("Int. Min. (m=1)", f"{int_min1:.1f} mm")
-    c3.metric("Int. Max. (m=1)", f"{int_max1:.1f} mm")
-    c4.metric("Int. Max. (m=2)", f"{int_max2:.1f} mm")
+    c1.metric("Envelope (m=1)", f"{env_dist:.1f}")
+    c2.metric("Int. Min. (m=1)", f"{int_min1:.1f}")
+    c3.metric("Int. Max. (m=1)", f"{int_max1:.1f}")
+    c4.metric("Int. Max. (m=2)", f"{int_max2:.1f}")
     c5.metric("% Error (d)", error_display)
 
 else:
@@ -188,8 +188,8 @@ else:
     m1_dist = (2 * lam * L / a) * 1000
     m2_dist = (4 * lam * L / a) * 1000
     
-    c1.metric("Minima Dist. (m=1)", f"{m1_dist:.1f} mm")
-    c2.metric("Minima Dist. (m=2)", f"{m2_dist:.1f} mm")
+    c1.metric("Minima Dist. (m=1)", f"{m1_dist:.1f}")
+    c2.metric("Minima Dist. (m=2)", f"{m2_dist:.1f}")
     c3.metric("% Error (a)", error_display)
 
 # --- 5. UI: Visualization ---
