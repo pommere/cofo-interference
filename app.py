@@ -159,32 +159,30 @@ I_final *= np.exp(-2 * (y_pts**2) / (w**2))
 st.subheader("Lab Analysis Results")
 laser_color = '#FF0000' if lam_nm >= 600 else '#00FF00' if lam_nm >= 495 else '#0000FF' if lam_nm >= 450 else '#8A2BE2'
 
-# Calculate Percent Error
-p_error = (abs(student_val - true_val) / true_val) * 100 if student_val > 0 else np.nan
+# 1. Calculation Logic
+if student_val > 0:
+    p_error = (abs(student_val - true_val) / true_val) * 100
+else:
+    p_error = np.nan
 
+# 2. UI Rendering
 if mode == "Double Slit":
-    # 5 columns: Envelope, Int. Minima, Int. Maxima m=1, Int. Maxima m=2, % Error
+    # Ensure you have exactly 5 columns defined
     c1, c2, c3, c4, c5 = st.columns(5)
     
-    env_dist = (2 * lam * L / a) * 1000       # Diffraction Envelope (m=1)
-    int_min1 = (lam * L / d) * 1000           # Interference Minima (m=1)
-    int_max1 = (2 * lam * L / d) * 1000       # Interference Maxima (m=1)
-    int_max2 = (4 * lam * L / d) * 1000       # Interference Maxima (m=2)
+    env_dist = (2 * lam * L / a) * 1000
+    int_min1 = (lam * L / d) * 1000
+    int_max1 = (2 * lam * L / d) * 1000
+    int_max2 = (4 * lam * L / d) * 1000
     
-    # 1. Diffraction Envelope (m=1)
     c1.metric("Diff. Envelope (m=1)", f"{env_dist:.2f} mm")
-    
-    # 2. Interference Minima (m=1) - Added per request
     c2.metric("Int. Minima (m=1)", f"{int_min1:.2f} mm")
-    
-    # 3. Interference Maxima (m=1)
     c3.metric("Int. Maxima (m=1)", f"{int_max1:.2f} mm")
-    
-    # 4. Interference Maxima (m=2)
     c4.metric("Int. Maxima (m=2)", f"{int_max2:.2f} mm")
     
-    # 5. Percent Error (d)
-    c5.metric("% Error (d)", "---" if np.isnan(p_error) else f"{p_error:.1f}%")
+    # This conditional ensures 'nan' never reaches the f-string formatter
+    error_text = "---" if np.isnan(p_error) else f"{p_error:.1f}%"
+    c5.metric("% Error (d)", error_text)
 
 else:
     c1, c2, c3 = st.columns(3)
@@ -193,7 +191,9 @@ else:
     
     c1.metric("Minima Dist. (m=1)", f"{m1_dist:.2f} mm")
     c2.metric("Minima Dist. (m=2)", f"{m2_dist:.2f} mm")
-    c3.metric("% Error (a)", "---" if np.isnan(p_error) else f"{p_error:.1f}%")
+    
+    error_text = "---" if np.isnan(p_error) else f"{p_error:.1f}%"
+    c3.metric("% Error (a)", error_text)
 
 # --- 5. UI: Visualization ---
 fig1, ax1 = plt.subplots(figsize=(12, 3.5))
