@@ -156,7 +156,7 @@ w = 100.0 * 1e-3
 I_final *= np.exp(-2 * (y_pts**2) / (w**2))
 
 # --- 4. UI: Results & Metrics ---
-st.subheader("Lab Analysis Results")
+st.subheader("Lab Analysis Results [mm]")
 laser_color = '#FF0000' if lam_nm >= 600 else '#00FF00' if lam_nm >= 495 else '#0000FF' if lam_nm >= 450 else '#8A2BE2'
 
 # 1. Calculation Logic (No NaN)
