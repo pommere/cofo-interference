@@ -60,19 +60,21 @@ with col1:
 
 with col2:
     st.markdown(f"""
-        <h1 style='color: #8D203C; margin-bottom: 0; padding-top: 10px;'>Wave Optics Lab</h1>
+        <h1 style='color: #8D203C; margin-bottom: 0; padding-top: 10px;'>Particle-Wave Interference Lab</h1>
         <p style='color: #002147; font-style: italic; font-size: 1.5em; margin-top: 0;'>
         College of the Ozarks | "Hard Work U"
         </p>
     """, unsafe_allow_html=True)
 
+st.markdown(r"""
+    Welcome to the Particle-Wave Interference Lab! 
+
+    When light passes through a narrow opening, it spreads out and creates a pattern of spots on a viewing screen. By measuring the distances between these spots, we can calculate the exact dimensions of the microscopic slits.
+""")
+
 # --- Updated Theory Section (Algebra-based) ---
 with st.expander("📊 Energy Exchange & Synthesis Help"):
     st.markdown(r"""
-    Welcome to the Wave Optics Lab! 
-
-    When light passes through a narrow opening, it spreads out and creates a pattern of spots on a viewing screen. By measuring the distances between these spots, we can calculate the exact dimensions of the microscopic slits.
-
     ### 1. Single Slit (Diffraction)
     For a single opening, the light cancels itself out at specific points, creating **dark spots (minima)**. The distance ($y$) from the center line to the $m^{th}$ dark spot is given by the formula:
     $$y = \frac{m \lambda L}{a}$$
