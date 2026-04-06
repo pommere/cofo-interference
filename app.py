@@ -73,7 +73,7 @@ st.markdown(r"""
 """)
 
 # --- Updated Theory Section (Algebra-based) ---
-with st.expander("〰️ Wave-Particle Analysis & Synthesis"):
+with st.expander("💥 Wave-Particle Analysis & Synthesis Help"):
     st.markdown(r"""
     ### 1. The Small Angle Approximation
     In this lab, we assume the distance to the screen ($D$) is much larger than the slit width ($a$). This allows us to simplify the math by assuming:
