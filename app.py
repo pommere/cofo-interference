@@ -60,7 +60,7 @@ with col1:
 
 with col2:
     st.markdown(f"""
-        <h1 style='color: #8D203C; margin-bottom: 0; padding-top: 10px;'>Particle-Wave Interference Lab</h1>
+        <h1 style='color: #8D203C; margin-bottom: 0; padding-top: 10px;'>Interference Lab</h1>
         <p style='color: #002147; font-style: italic; font-size: 1.5em; margin-top: 0;'>
         College of the Ozarks | "Hard Work U"
         </p>
