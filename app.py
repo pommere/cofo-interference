@@ -169,8 +169,8 @@ if mode == "Double Slit":
     c2.metric("Int. Maxima (m=1)", f"{int_m1:.2f} mm")
     c3.metric("Int. Maxima (m=2)", f"{int_m2:.2f} mm")
     
-    # Use np.isnan() for the check
-    c4.metric("% Error (d)", "---" if np.isnan(p_error) else f"{p_error:.2f}%")
+    # Corrected display logic using np.isnan()
+    c4.metric("% Error (d)", "---" if np.isnan(p_error) else f"{p_error:.1f}%")
 
 else:
     c1, c2, c3 = st.columns(3)
@@ -180,8 +180,8 @@ else:
     c1.metric("Minima Dist. (m=1)", f"{m1_dist:.2f} mm")
     c2.metric("Minima Dist. (m=2)", f"{m2_dist:.2f} mm")
     
-    # Use np.isnan() for the check
-    c3.metric("% Error (a)", "---" if np.isnan(p_error) else f"{p_error:.2f}%")
+    # Corrected display logic using np.isnan()
+    c3.metric("% Error (a)", "---" if np.isnan(p_error) else f"{p_error:.1f}%")
 
 # --- 5. UI: Visualization ---
 fig1, ax1 = plt.subplots(figsize=(12, 3.5))
